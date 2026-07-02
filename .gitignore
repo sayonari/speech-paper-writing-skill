@@ -19,3 +19,10 @@ _ref/
 
 # 抽出テキストコーパス（PDFから再生成可能・大容量）
 corpus/
+
+# LaTeX intermediates
+*.aux
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk

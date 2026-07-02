@@ -1,0 +1,173 @@
+% Interspeech風 2段組ショーケース論文
+% コンパイルは必ず ./compile.sh を使用すること
+\documentclass[a4paper,10pt,twocolumn]{article}
+
+\usepackage[top=25mm,bottom=30mm,left=20mm,right=20mm,columnsep=8mm]{geometry}
+\usepackage{newtxtext,newtxmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.6em}{}
+\titlespacing{\section}{0pt}{10pt}{4pt}
+\titlespacing{\subsection}{0pt}{8pt}{3pt}
+
+\setlength{\parindent}{1.2em}
+\pagestyle{plain}
+
+\title{\vspace{-8mm}\LARGE\bfseries Humans Do Not Delve: Measuring LLM-Induced Style Drift\\ in 25 Years of Speech Conference Papers}
+\author{Ryota Nishimura\\[1mm]
+\normalsize Toyohashi University of Technology, Japan\\
+\normalsize \texttt{nishimura@cs.tut.ac.jp}}
+\date{}
+
+\begin{document}
+
+\twocolumn[
+\maketitle
+\vspace{-8mm}
+\begin{center}
+\begin{minipage}{0.92\textwidth}
+\textbf{Abstract}\par\vspace{1mm}
+Large language models (LLMs) are now widely used to draft and polish scientific text, and readers have started to recognize a characteristic ``AI style.'' In this paper, we measure that style against 25 years of ground truth. We analyze 62{,}977 papers (166.9 million words) from the complete ICASSP 2001--2026 and Interspeech 2007--2025 proceedings, and we separate a clean human baseline (2015--2022) from the LLM era (2024--2026). The baseline is remarkably stable: for 24 years, em-dash frequency, semicolon rate, and sentence length barely moved. In 2024 the picture changes abruptly. Words such as \emph{underscoring} rise by two orders of magnitude, \emph{notably} rises sevenfold, and em-dashes triple in 2025 in both conferences. We also observe that infamous markers such as \emph{delve} peaked in 2024 and then declined, so fixed blocklists decay quickly. On the other hand, phrases that humans use routinely, such as \emph{in other words}, are vanishing from the contaminated corpus and turn out to be strong human markers. We distill these measurements into evidence-based writing guidelines, encode them as a reference file for coding agents, and show in a controlled generation experiment that the guidelines move AI-drafted introductions to within the measured human range. This paper itself was written under those guidelines.\par\vspace{2mm}
+\noindent\textbf{Index Terms}: scientific writing, large language models, style analysis, diachronic corpus study, AI-assisted writing
+\end{minipage}
+\end{center}
+\vspace{4mm}
+]
+
+\section{Introduction}
+
+Writing assistance by large language models has moved from novelty to routine in only three years. Surveys of recent scholarly text estimate that a substantial fraction of new abstracts and reviews contain LLM-generated or LLM-edited passages \cite{liang2024,gray2024}. Readers, meanwhile, have developed an informal detector of their own. Certain words, punctuation habits, and paragraph rhythms are now read as ``AI style,'' sometimes unfairly, and authors who write naturally in that register risk being suspected of outsourcing their prose.
+
+Most quantitative evidence for this drift comes from biomedical abstracts and general scholarly corpora \cite{kobak2024,gray2024,juzek2025}. To the best of our knowledge, no comparable study exists for the speech and language processing community, even though this community both builds LLMs and writes with them. A field-specific study matters for two reasons. First, editorial norms differ across fields, so a marker that is rare in medicine may be normal in engineering, and vice versa. Second, practical guidance for AI-assisted writing needs field-specific target values, not just a list of forbidden words.
+
+In this paper, we present a diachronic analysis of the complete ICASSP and Interspeech proceedings, 62{,}977 papers and 166.9 million words in total, spanning 2001 to 2026. The corpus straddles the release of ChatGPT in late 2022, which lets us treat the years up to 2022 as a clean human baseline and the years from 2024 onward as a naturally contaminated condition. We ask three questions. We first ask how stable the writing conventions of the field were before LLMs arrived. We then ask which lexical and typographic markers changed after 2023, and how those markers themselves evolve over time. Note that the second question has a moving target: as certain words become notorious, both model vendors and authors suppress them, so any fixed blocklist should decay. Finally, we ask whether the resulting measurements can steer an LLM back into the human distribution.
+
+The contributions are threefold. We provide the first large-scale, field-specific measurement of LLM-induced style drift in speech conference writing, including evidence that the drift is visible in punctuation alone. We show that AI-marker vocabulary is subject to fashion dynamics, with a distinct peak-and-decline pattern for the most notorious words, and we identify declining human phrases as a more durable signal. In order to make the findings actionable, we convert them into quantitative writing guidelines, release them as a machine-readable style file for LLM coding agents, and validate them in a generation experiment. The rest of the paper is organized as follows. Section 2 describes the corpus and the measurement pipeline. Section 3 reports the diachronic results. Section 4 derives the guidelines, and Section 5 evaluates them. Section 6 concludes.
+
+\section{Corpus and method}
+
+\subsection{Corpus}
+
+We collected the complete proceedings of ICASSP 2001--2026 (45{,}571 papers, 114.0M words) and Interspeech 2007--2025 (17{,}406 papers, 52.9M words). Laboratory archives of the distributed proceedings media provided most years, and the ISCA Archive provided the years that were published online only. Text was extracted with \texttt{pdftotext}. For each paper we kept the body from the abstract heading to the references heading, repaired end-of-line hyphenation, and discarded files shorter than 2{,}000 characters. Files that survived this filter are counted as papers above.
+
+\subsection{Three-layer design}
+
+A naive approach would pool all years and describe ``how the field writes.'' This is no longer safe, because papers from 2023 onward already contain LLM-assisted prose. In other words, recent human-authored proceedings cannot serve as a style reference. We therefore split the corpus into three layers. The \textbf{core} layer, 2015--2022 (19{,}925 papers, 56.8M words), predates ChatGPT and defines the human baseline used for all target frequencies. The \textbf{contaminated} layer, 2024--2026, is not used as a reference at all. Instead it acts as a detector, because any expression that surges there while the baseline was flat is a candidate AI marker. The ICASSP 2023 edition, submitted in late 2022, sits on the boundary and is excluded from both layers. The \textbf{historical} layer, 2001--2014, tells us whether a baseline convention is a recent fashion or a stable property of the field.
+
+\subsection{Measurements}
+
+For every conference and year we computed word and $n$-gram frequencies, punctuation rates, sentence-length statistics, and section-heading sequences, all normalized per million words (/M). Candidate AI markers were taken from prior reports \cite{kobak2024,juzek2025} and from our own comparison of LLM-drafted and human introductions (Section 5). For each candidate we report the core-layer baseline and the 2024--2026 mean, and we classify it by two thresholds: expressions with a baseline below 3/M are labeled \textsc{ban} (humans essentially never write them), and expressions with a healthy baseline but a post-LLM surge factor of at least 3 are labeled \textsc{limit} (humans use them, at a rate that should not be exceeded).
+
+\section{Results}
+
+\subsection{The human baseline is remarkably stable}
+
+Table~\ref{tab:baseline} summarizes conventions that stayed essentially constant from 2001 to 2024. Mean sentence length varied only between 23.2 and 25.4 words over 26 ICASSP editions. Semicolons appear about once every 30 sentences. Em-dashes appear 92--149 times per million words, which is roughly 0.4 per paper, and rhetorical questions are almost absent. It can be seen that these are not arbitrary stylistic choices but long-standing norms of the community, and this stability is what makes the post-2023 discontinuity measurable.
+
+\begin{table}[t]
+\centering
+\caption{Stable properties of the human baseline (core layer; historical layer confirms stability back to 2001).}
+\label{tab:baseline}
+\small
+\begin{tabular}{lc}
+\toprule
+Metric & Human baseline \\
+\midrule
+Sentence length (mean / median, words) & 24.5 / 21 \\
+Semicolons per sentence & 0.03--0.05 \\
+Em-dashes per million words & 92--149 \\
+Em-dashes per paper & $\approx$ 0.4 \\
+Bullet characters per paper & $<$ 1 \\
+Question marks per 1k words & 0.23 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The 2024 discontinuity}
+
+The first LLM-era submission cycle produced an abrupt break. Table~\ref{tab:surge} shows representative trajectories. The adverb \emph{notably} had drifted slowly from 6/M (2001) to 24/M (2020). In ICASSP 2024 it jumped to 152/M, and it reached 170/M in 2026. The gerund \emph{underscoring} rose from under 1/M to 50/M, a factor above 100. The adjective \emph{crucial} had held near 40/M for fifteen years and tripled within two. Punctuation moved as well: em-dash frequency, flat for 24 years, more than tripled in 2025 in both conferences at once (514/M in ICASSP, 489/M in Interspeech), and bullet characters doubled. On the other hand, the average sentence length barely moved, so surface statistics alone do not capture everything that changed.
+
+Interspeech replicates every ICASSP trend with a one-year-aligned profile, which rules out venue-specific template artifacts as an explanation. Note that our estimates are conservative lower bounds on prevalence, since we measure marker frequency rather than the fraction of affected papers.
+
+\begin{table}[t]
+\centering
+\caption{Per-million-word frequencies in ICASSP by year. IS25 gives the Interspeech 2025 value for comparison.}
+\label{tab:surge}
+\small
+\setlength{\tabcolsep}{4.2pt}
+\begin{tabular}{lrrrrrr}
+\toprule
+Expression & 2020 & 2023 & 2024 & 2025 & 2026 & IS25 \\
+\midrule
+em-dash (---) & 137 & 130 & 104 & 514 & 544 & 489 \\
+\emph{notably} & 24 & 40 & 152 & 126 & 170 & 215 \\
+\emph{crucial} & 62 & 80 & 193 & 218 & 200 & 236 \\
+\emph{underscoring} & 0.4 & 0.2 & 13 & 22 & 50 & -- \\
+\emph{intricate} & 4.1 & 4.9 & 52 & 40 & 22 & -- \\
+\emph{pivotal} & 2.4 & 4.2 & 41 & 22 & 15 & -- \\
+\emph{delve} & 0.4 & 1.3 & 12 & 6.2 & 1.2 & -- \\
+\emph{in the realm of} & 0.2 & 0.8 & 15 & 6.7 & 1.2 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Marker fashion: peak and decline}
+
+The lower half of Table~\ref{tab:surge} shows a second-order effect. The most publicized AI words, \emph{delve}, \emph{realm}, \emph{pivotal}, and \emph{intricate}, peaked in 2024 and have been falling since, presumably because model vendors and authors now suppress them. Less notorious markers such as \emph{underscoring}, \emph{comprehensively}, and \emph{notably} are still rising. In other words, the AI-marker vocabulary is a moving target, and a blocklist frozen in 2024 already misses the current generation. Any practical guideline therefore needs a regeneration procedure, not a fixed list. We also found that several folk markers fail empirically: \emph{sheds light on}, \emph{a plethora of}, and \emph{myriad} did not increase after 2023 in this corpus. They are simply rare, in human and machine text alike.
+
+\subsection{Vanishing human phrases}
+
+Contamination is visible from the opposite direction as well. Several high-frequency human phrases are declining in the mixed-authorship years: \emph{in other words} fell to 0.2 times its baseline rate, \emph{on the other hand} to 0.3, and \emph{it should be noted} to 0.4. A controlled experiment (Section 5) confirms that unguided LLM drafts contain essentially none of these expressions. This makes them attractive as positive guidance. Rather than only forbidding machine-flavored words, a guideline can ask the model to write with the connectives the field actually uses.
+
+\subsection{Venue conventions}
+
+The corpus also yields venue-specific norms that authors absorb by imitation. ICASSP papers prefer the heading \textsc{conclusion} over \textsc{conclusions} by a factor of 2.2, cite figures as ``Fig.~N,'' and rarely number a discussion section. Interspeech papers show the reverse preference for \textsc{conclusions}, cite ``Figure~N,'' frequently include a numbered discussion section, and often number the acknowledgements. The dominant ICASSP skeleton is Introduction, Proposed Method, Experiments, Conclusion; the dominant Interspeech skeleton inserts Results and Discussion. Such details rarely appear in style guides, yet a draft that violates them reads as foreign to reviewers.
+
+\section{From measurements to guidelines}
+
+We compiled the results into a compact, machine-readable style reference. It contains the \textsc{ban} list (31 words and 10 phrases with baselines below 3/M, each with its measured surge factor), the \textsc{limit} list with explicit target rates (for example, \emph{notably} at most once per paper, since its human rate of 24/M corresponds to 0.07 occurrences in a 2{,}700-word paper), the positive list of human markers and field formulas, the quantitative targets of Table~\ref{tab:baseline}, and the venue conventions of Section 3.5. Because inflected variants can evade phrase matching, the file also ships stem-based \texttt{grep} patterns for a final manuscript check. The reference is written as a skill file for LLM coding agents, so the same document serves both as documentation for humans and as an executable constraint for models. Regeneration is scripted end to end, from PDF collection to list synthesis, so the lists can be refreshed as marker fashion moves.
+
+\section{Validation}
+
+We tested whether the guidelines actually move generated text into the human range. For three published papers on turn-taking and backchannel modeling, we asked an LLM (Claude, Anthropic) to write an introduction on the same topic, once with no style instructions and once with the style reference. We then compared both drafts with the corresponding human introductions using the metrics of Section 2.3.
+
+\begin{table}[t]
+\centering
+\caption{Introduction-writing experiment (per 1k words; human markers as defined in Section 3.4).}
+\label{tab:valid}
+\small
+\begin{tabular}{lrrr}
+\toprule
+Metric & Unguided & Guided & Human \\
+\midrule
+Em-dashes & 3.98 & 0.0 & 0.0 \\
+Human markers & 0.0 & 6.88 & 6.05 \\
+\textsc{ban} words & 0.0 & 0.0 & 0.0 \\
+Mean sentence length & 23--29 & 24.0 & 24.6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:valid} summarizes the outcome. The unguided model already avoided the notorious \textsc{ban} vocabulary, which is consistent with the fashion dynamics of Section 3.3, but it opened its very first sentence with a paired em-dash insertion and used none of the human connectives. With the style reference, the em-dashes disappeared and the human-marker rate landed within 15\% of the real papers. One \textsc{ban} phrase slipped through as an inflected variant (``shed \emph{some} light on''), which is precisely the failure mode the stem-based check now covers. The experiment is small, three topics and one model family, and the metrics are necessarily coarse. We regard it as a functional test of the guidelines rather than a claim about detection.
+
+\section{Conclusions}
+
+We measured 25 years of writing style in ICASSP and Interspeech proceedings and found a stable human baseline, an abrupt LLM-era discontinuity beginning in 2024, fashion dynamics that erode fixed blocklists, and a set of vanishing human phrases that provide durable positive guidance. The measurements were distilled into an evidence-based, regenerable style reference for AI-assisted writing, and a generation experiment showed that the reference moves LLM drafts to within the measured human range on the metrics studied. Future work includes subfield-specific phrase inventories, coverage of journals and of other research communities, and periodic regeneration to track the drift as it continues. This paper was drafted and revised under the proposed guidelines; whether it reads as human is left to the reviewer.
+
+\section{Acknowledgements}
+
+The corpus pipeline, analyses, and manuscript drafting were carried out with the assistance of Claude (Anthropic) under the author's direction. The author thanks the Kitaoka laboratory for maintaining the proceedings archive used in this study.
+
+\begin{thebibliography}{9}\small
+\bibitem{liang2024} W.~Liang \emph{et al.}, ``Monitoring AI-modified content at scale: A case study on the impact of ChatGPT on AI conference peer reviews,'' in \emph{Proc. ICML}, 2024.
+\bibitem{gray2024} A.~Gray, ``ChatGPT `contamination': Estimating the prevalence of LLMs in the scholarly literature,'' \emph{arXiv:2403.16887}, 2024.
+\bibitem{kobak2024} D.~Kobak, R.~Gonz\'alez-M\'arquez, E.-\'A.~Horv\'at, and J.~Lause, ``Delving into LLM-assisted writing in biomedical publications through excess vocabulary,'' \emph{Science Advances}, vol.~11, no.~27, 2025.
+\bibitem{juzek2025} T.~S.~Juzek and Z.~B.~Ward, ``Why does ChatGPT `delve' so much? Exploring the sources of lexical overrepresentation in large language models,'' in \emph{Proc. COLING}, 2025.
+\end{thebibliography}
+
+\end{document}
