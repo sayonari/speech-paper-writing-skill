@@ -12,8 +12,8 @@
 
 \titleformat{\section}{\large\bfseries}{\thesection.}{0.6em}{}
 \titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.6em}{}
-\titlespacing{\section}{0pt}{10pt}{4pt}
-\titlespacing{\subsection}{0pt}{8pt}{3pt}
+\titlespacing{\section}{0pt}{8pt}{3pt}
+\titlespacing{\subsection}{0pt}{6pt}{2pt}
 
 \setlength{\parindent}{1.2em}
 \pagestyle{plain}
@@ -88,11 +88,45 @@ Question marks per 1k words & 0.23 \\
 \end{tabular}
 \end{table}
 
+\subsection{The formulaic core of the field}
+
+Beyond punctuation, the baseline contains a stable inventory of formulaic expressions that signal membership in the community. Table~\ref{tab:formulas} lists representative examples with their core-layer rates in each venue. Some of them, such as \emph{in this paper, we} and \emph{the rest of the paper is organized as follows}, are openly formulaic, and style guides outside engineering often discourage them. In this field they are simply how introductions are written, and they have been for the whole historical layer. Others are quieter. The connective \emph{in order to} appears 442 times per million words in ICASSP, although a general-purpose editor would shorten it to \emph{to}. It can be seen from Section 5 that an unguided LLM reproduces the loud formulas but drops the quiet ones, which is one reason its drafts feel subtly foreign.
+
+\begin{table}[t]
+\centering
+\caption{Field formulas in the core layer (per million words).}
+\label{tab:formulas}
+\small
+\setlength{\tabcolsep}{4.5pt}
+\begin{tabular}{lrr}
+\toprule
+Expression & ICASSP & Interspeech \\
+\midrule
+in this paper(,) we & 493 & 437 \\
+in order to & 442 & $>$300 \\
+state-of-the-art & 360 & 358 \\
+in this work(,) we & 205 & 196 \\
+in this section(,) we & 180 & 81 \\
+on the other hand & 154 & 135 \\
+as shown in Fig.$\sim$/Figure$\sim$ & 153 & 86 \\
+(the) paper is organized as (follows) & 66 & 52 \\
+to the best of our knowledge & 49 & 50 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{The 2024 discontinuity}
 
 The first LLM-era submission cycle produced an abrupt break. Table~\ref{tab:surge} shows representative trajectories. The adverb \emph{notably} had drifted slowly from 6/M (2001) to 24/M (2020). In ICASSP 2024 it jumped to 152/M, and it reached 170/M in 2026. The gerund \emph{underscoring} rose from under 1/M to 50/M, a factor above 100. The adjective \emph{crucial} had held near 40/M for fifteen years and tripled within two. Punctuation moved as well: em-dash frequency, flat for 24 years, more than tripled in 2025 in both conferences at once (514/M in ICASSP, 489/M in Interspeech), and bullet characters doubled. On the other hand, the average sentence length barely moved, so surface statistics alone do not capture everything that changed.
 
-Interspeech replicates every ICASSP trend with a one-year-aligned profile, which rules out venue-specific template artifacts as an explanation. Note that our estimates are conservative lower bounds on prevalence, since we measure marker frequency rather than the fraction of affected papers.
+Figure~\ref{fig:trends} plots two of these trajectories over the full corpus. The visual impression matches the numbers: both curves are essentially flat for two decades, and both leave the historical band within one or two submission cycles of the ChatGPT release. Interspeech replicates every ICASSP trend with a one-year-aligned profile, which rules out venue-specific template artifacts as an explanation. Note that our estimates are conservative lower bounds on prevalence, since we measure marker frequency rather than the fraction of affected papers.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\columnwidth]{fig_trends.pdf}
+\caption{Em-dash rate (top) and frequency of \emph{notably} (bottom) per million words in ICASSP (2001--2026) and Interspeech (2007--2025) proceedings. The dotted line marks the release of ChatGPT. Both metrics stay within their historical band for two decades and depart from it within one or two submission cycles.}
+\label{fig:trends}
+\end{figure}
 
 \begin{table}[t]
 \centering
@@ -155,13 +189,30 @@ Mean sentence length & 23--29 & 24.0 & 24.6 \\
 
 Table~\ref{tab:valid} summarizes the outcome. The unguided model already avoided the notorious \textsc{ban} vocabulary, which is consistent with the fashion dynamics of Section 3.3, but it opened its very first sentence with a paired em-dash insertion and used none of the human connectives. With the style reference, the em-dashes disappeared and the human-marker rate landed within 15\% of the real papers. One \textsc{ban} phrase slipped through as an inflected variant (``shed \emph{some} light on''), which is precisely the failure mode the stem-based check now covers. The experiment is small, three topics and one model family, and the metrics are necessarily coarse. We regard it as a functional test of the guidelines rather than a claim about detection.
 
+As a final check, we ran the compiled manuscript of this paper through the same measurement pipeline. The draft satisfied the em-dash, bullet, and rhetorical-question rules by construction. It did not satisfy the semicolon rule: the first version contained seven semicolons, a rate of 0.065 per sentence and roughly twice the human baseline of Table~\ref{tab:baseline}. Three of them were split into separate sentences, two sit in table captions, and the remaining two were kept deliberately. The version you are reading measures a human-marker rate of 5.5 per thousand words, within the range of the real introductions in Table~\ref{tab:valid}. In other words, the guidelines caught their own authors, which is the behavior one would hope for.
+
+\section{Discussion}
+
+\subsection{Style as a moving target}
+
+The peak-and-decline pattern of Section 3.4 suggests that scientific English is now coevolving with the models that help write it. Words become markers, markers become notorious, and notoriety drives suppression, both in model post-training and in author self-editing. In other words, the distribution we measured in 2026 will not be the distribution of 2028. This has two practical consequences. First, any static blocklist, including ours, has a shelf life of roughly one submission cycle, which is why the release ships the full regeneration pipeline rather than only its current output. Second, the more durable signal sits on the human side. The formulaic core of Table~\ref{tab:formulas} has survived twenty-five years of paradigm shifts in the underlying technology, from GMM--HMM systems to end-to-end models, and it changed less in that time than the AI-marker vocabulary changed in two years. Guidance anchored to the stable human baseline should therefore age more gracefully than guidance anchored to the failures of any particular model generation.
+
+\subsection{Ethical considerations}
+
+Guidelines that make LLM-assisted text match human norms can be read as a tool for hiding LLM use, so the intended use deserves a clear statement. The guidelines encode the editorial norms of a research community, and following editorial norms is what careful human revision has always done. Our position is that assistance should be disclosed, as it is in this paper, and that the text itself should meet the standards of the venue regardless of how it was drafted. Note that the measurements cut both ways: the same tables that guide generation also sharpen the informal detector that readers already apply. What the community should avoid, in our view, is treating individual marker words as evidence of misconduct. Section 3.4 shows that some notorious words were never common in machine text for this field, and Section 3.2 shows that ordinary human words such as \emph{crucial} are now statistically suspect. Word-level suspicion punishes authors, including non-native speakers who learned the suspect vocabulary legitimately, without establishing anything about authorship.
+
+\subsection{Limitations}
+
+The analysis inherits the limits of PDF text extraction, so paragraph boundaries and mathematical content are only partially recovered, and one venue-year (ICASSP 2025) showed en-dash and quotation-mark anomalies that we attribute to a typesetting change and excluded from the guidelines. Frequencies are corpus-level, so we cannot attribute any particular paper to LLM assistance, and our contamination estimates are lower bounds. The corpus covers two conferences and English text only, and the validation experiment used one model family and three topics. Finally, the guideline targets are frequencies, not meanings. A draft can satisfy every number in Table~\ref{tab:baseline} and still be wrong, vague, or dull; the guidelines address style, and only style.
+
 \section{Conclusions}
 
 We measured 25 years of writing style in ICASSP and Interspeech proceedings and found a stable human baseline, an abrupt LLM-era discontinuity beginning in 2024, fashion dynamics that erode fixed blocklists, and a set of vanishing human phrases that provide durable positive guidance. The measurements were distilled into an evidence-based, regenerable style reference for AI-assisted writing, and a generation experiment showed that the reference moves LLM drafts to within the measured human range on the metrics studied. Future work includes subfield-specific phrase inventories, coverage of journals and of other research communities, and periodic regeneration to track the drift as it continues. This paper was drafted and revised under the proposed guidelines; whether it reads as human is left to the reviewer.
 
+\enlargethispage{2\baselineskip}
 \section{Acknowledgements}
 
-The corpus pipeline, analyses, and manuscript drafting were carried out with the assistance of Claude (Anthropic) under the author's direction. The author thanks the Kitaoka laboratory for maintaining the proceedings archive used in this study.
+The corpus pipeline, analyses, and drafting were carried out with the assistance of Claude (Anthropic) under the author's direction, disclosed here in the spirit of Section 6.2.
 
 \begin{thebibliography}{9}\small
 \bibitem{liang2024} W.~Liang \emph{et al.}, ``Monitoring AI-modified content at scale: A case study on the impact of ChatGPT on AI conference peer reviews,'' in \emph{Proc. ICML}, 2024.
