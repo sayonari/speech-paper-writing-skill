@@ -1,0 +1,18 @@
+# Logs
+logs
+*.log
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+.env
+
+# 会議論文PDF等の参照資料（著作権・サイズのためGit管理外、450MB超）
+_ref/
