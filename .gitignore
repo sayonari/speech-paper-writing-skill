@@ -20,6 +20,9 @@ _ref/
 # 抽出テキストコーパス（PDFから再生成可能・大容量）
 corpus/
 
+# macOS AppleDouble junk
+._*
+
 # LaTeX intermediates
 *.aux
 *.out
