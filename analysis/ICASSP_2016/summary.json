@@ -1,0 +1,10 @@
+{
+  "papers": 1376,
+  "total_words": 3587718,
+  "total_sentences": 169553,
+  "sent_len_mean": 25.2,
+  "sent_len_median": 21,
+  "sent_len_p90": 44,
+  "semicolons_per_sentence": 0.04,
+  "em_dash_per_paper": 0.4
+}

@@ -1,0 +1,12 @@
+symbol,count,per_million_words,per_paper
+paren (,55413,26132.6,86.99
+colon :,14647,6907.5,22.99
+percent %,8198,3866.2,12.87
+semicolon ;,4684,2209.0,7.35
+"double_quote """,3480,1641.2,5.46
+en_dash –,2201,1038.0,3.46
+bullet •,568,267.9,0.89
+em_dash — (Index Terms除く),485,228.7,0.76
+double_hyphen --,13,6.1,0.02
+triple_hyphen ---,8,3.8,0.01
+index_terms_template,1,0.5,0.0

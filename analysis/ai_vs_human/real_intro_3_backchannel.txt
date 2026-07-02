@@ -1,0 +1,24 @@
+Response tokens like ‘mm’ and ‘yeah’ are among the most frequent and yet easily overlooked aspects of conversation. Often described as ‘backchannels’, they occupy a central role in
+scaffolding interaction, streamlining turn-taking and calibrating
+understanding [1, 2]. The sheer frequency and functional importance of these items means we can think of them as interactional tools: linguistic devices that accomplish social actions.
+Progress towards interactive language technologies hinges on
+understanding and modelling such interactional tools [3, 4].
+While some of them have long been studied in a small number of well-resourced languages [5, 6], their structure and variation across diverse languages is mostly uncharted territory. Here
+we combine insights from comparative linguistics, conversation
+analysis and computational approaches to shed new light on a
+key aspect of human interactional infrastructure.
+Tackling structure and variation in response tokens across
+
+Figure 1: Instances of response tokens in their natural environment in 3 unrelated languages: Arabic, Catalan and Japanese.
+We use the structural fact that such tokens tend to occur in series as a way to identify them across languages.
+
+languages requires addressing three interlinked challenges. The
+first is a dearth of data: corpora of casual speech, crucial to ensure solid foundations for diversity-aware language technology,
+are still quite rare. We address this by using conversational corpora from diverse sources, including language documentation
+archives that are increasingly available but rarely used. The second is how to achieve comparability in uncharted territory. We
+address this by using the sequential structure of conversation to
+ensure we compare like with like across unrelated languages.
+The third is an overreliance on orthographic representations,
+which risks underestimating degrees of variation and flexibility in the use of response tokens. We address this by staying as
+closely as possible to the speech signal in its sequential context,
+rather than taking written forms for granted.

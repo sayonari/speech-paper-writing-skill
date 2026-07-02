@@ -1,0 +1,10 @@
+{
+  "papers": 1202,
+  "total_words": 3164231,
+  "total_sentences": 149902,
+  "sent_len_mean": 25.4,
+  "sent_len_median": 22.0,
+  "sent_len_p90": 44,
+  "semicolons_per_sentence": 0.036,
+  "em_dash_per_paper": 0.28
+}

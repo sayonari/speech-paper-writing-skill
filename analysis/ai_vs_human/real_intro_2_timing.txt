@@ -1,0 +1,54 @@
+In the past few years, various spoken dialogue systems (SDS) have
+been implemented in smartphones, humanoid robots, smart speakers, and the other applications. Despite this rapid growth of the
+SDS market, human-robot conversations are still very different from
+natural human-human conversations. To increase the naturalness of
+dialogue, SDS must imitate a human’s conversational behavior as
+much as possible. One human behavior the SDS should imitate is
+backchannel (BC). There are two tasks in generating BCs: when the
+system should generate BC (BC opportunity) and what kind of BC
+form is appropriate (BC category).
+In the case of BC opportunity prediction (BOP), numerous studies have investigated various features and methods. The majority of
+rule-based methods used pitch as a predictor [1][2]. Other studies
+have used machine learning to train prediction models [3][4][5][6].
+They evaluated the method with various input features and reported
+that the performance with both lexical and acoustic features was signiﬁcantly better than that with only the acoustic features.
+On the other hand, few studies have examined the BC category
+prediction (BCP). Kawahara et al. [7] classiﬁed BC into four classes:
+“un,” “unX2,” “unX3,” and “assessment” using both acoustic and
+lexical features. Fujie et al. [8] proposed a method to predict optimal
+BC words of SDS using a ﬁnite state transducer (FST) that receives
+a user’s utterance and outputs BC words.
+In a practical spoken dialogue system, the ASR needs a certain length of processing time to output lexical features from speech
+
+978-1-7281-7605-5/21/$31.00 ©2021 IEEE
+
+data. However, this lexical feature extraction causes a response delay when it is implemented to actual SDS. This means that, if BC is
+predicted on the basis of the lexical features, the timing of backchannel generation of SDS is also delayed. Delayed BC might cause an
+unnatural conversation, as BC is a kind of a reﬂex action. Many
+researchers have proposed BC prediction methods using the lexical
+features. However, most researchers have not discussed the effect
+of ASR processing time on obtaining the lexical features. A few researchers have researched BC prediction using lexical features under
+one of two assumptions: ASR gives the lexical features with no delay
+[5][9] or takes a constant and short 100 ms processing time to output the lexical features [10]. Fujie et al. [8] proposed a method for
+constructing an FST that outputs optimal BC words to be uttered by
+SDS from a user’s utterance even while the user is speaking. However, they did not show how much the method reduces the delay in
+BC word output. In our last study, we proposed a method that can
+mitigate the response delay problem in BC prediction [11].
+To predict events in the near future, utilization of an early
+loss (EL) function has been studied, especially in vision research
+[12][13]. However, there is no research that considers utilization
+of an attention mechanism with EL. Looking at the success of the
+attention mechanism in various ﬁelds [14][15], the mechanism must
+contribute to future event prediction using EL. We propose a novel
+method to incorporate the attention mechanism with EL functionbased future event prediction.
+
+7393
+
+ICASSP 2021
+
+In this study, we propose a novel BC opportunity and category
+prediction method to mitigate the response delay problem caused by
+ASR. We incorporate an EL function to train attention-based long
+short-term memory (LSTM) models to mitigate the delay problem.
+To the best of our knowledge, our paper is the ﬁrst to incorporate an
+attention mechanism with EL function-based future event prediction.

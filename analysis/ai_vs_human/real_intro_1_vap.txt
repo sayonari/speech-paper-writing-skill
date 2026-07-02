@@ -1,0 +1,89 @@
+Turn-taking is the fundamental ability of humans to organize
+spoken interaction, i.e., to coordinate who the current speaker
+is, in order to avoid the need for interlocutors to listen and speak
+at the same time [1]. A dialog can be viewed as a sequence of
+turns, constructed through the joint activity of turn-taking between the two speakers. A turn refers to segments of activity
+where a single speaker controls the direction of the dialog. In
+conversational systems, turn-taking has traditionally been modeled using threshold policies which recognize silences longer
+than a chosen duration as transition-relevant places. Although
+these types of models are commonly used, it is well known that
+they are insufficient for modeling human-like turn-taking [2],
+since silences inside of a speaker turn are often longer than silences between turns. Thus, such policies will either result in
+interruptions or sluggish responses.
+However, since pauses, overlaps and interruptions are very
+common phenomena, and since turn-taking is often optional, it
+is hard come up with objective criteria for what a turn really is,
+and how to automatically identify turns in dialog data [2]. One
+approach to make data-driven modeling of turn-taking feasible, is to instead model the dynamics of the voice-activity (VA)
+of the dialog participants (i.e., the binary notion of whether a
+person is speaking or not). From the VA, we can then identify certain events related to turn-taking. When VA from one
+speaker transitions to VA from the other speaker, we can identify a SHIFT, and when there is a silence within the VA of a
+single speaker (without VA from the other speaker), there is a
+HOLD. During a turn controlled by one speaker there may also
+be shorter, isolated VA from the other speaker, which roughly
+corresponds to the phenomenon called backchannels [3], i.e.,
+shorter feedback vocalizations such as “mhm”. These turntaking events are very important to identify for a conversational
+system. For example, it should be able to tell whether a mutual
+silence should be identified as a SHIFT or a HOLD. It is also
+important to identify when it is appropriate to backchannel, and
+whether the start of a VA is likely to constitute a backchannel
+or a longer contribution (i.e., a proper turn shift).
+
+Figure 1: The VAP model processes the input features at time
+t. The input to the model is the combined speech waveforms of
+the two speakers (xt ), the VA-frames of the window (vtf ), and
+the longer VA-history (vth ). The waveform and VA-features are
+processed separately, projected to a common feature space and
+added together to produce the predictor input, ht . The predictor consists of a causal transformer feeding into the VAP-head
+to produce the output projection. The green box illustrates the
+various outputs of the different models that we compare.
+
+There are two main approaches to data-driven modeling of
+turn-taking, characterized by the cost of data collection, training objective and model utility. We use model utility to denote the ease of mapping the model outputs to specific actions,
+or in other words, how straightforward the model outputs are
+interpreted as specific actions by the researcher. The training
+objectives can coarsely be organized in to two groups: supervised and self-supervised learning. Supervised learning refers
+to classification models which map some input feature space to
+specific labels. As these labels are typically human-annotated,
+the cost of data collection is high. On the other hand, since the
+training objective is very specific, the model utility is high, as
+the labels can be interpreted explicitly. This has been the most
+commonly used approach for training turn-taking systems in the
+past [4, 5, 6].
+Self-Supervised Learning (SSL) can be viewed as the task
+of reconstructing, or predicting, occluded parts of the data. The
+idea is to train on these general tasks, minimizing the networks
+capacity to exploit “shortcuts”, in order to find patterns useful
+
+for modeling the underlying data distribution. Once trained,
+a SSL model can be fine-tuned on a particular dataset, retrained on a downstream task, its representations used as input
+to other systems, or used directly through “zero-shot” classification. Zero-shot classification is done by mapping the model’s
+outputs directly to the relevant classes in a specific task, without the need of additional training. Many areas of research have
+shown promising performance gains by utilizing SSL such as
+Vision [7, 8], Audio [9, 10, 11] and NLP [12, 13].
+Compared to supervised learning, data collection for SSL
+is much cheaper (since no annotation is needed), whereas the
+general self-supervised training objective produces lower model
+utility outputs. For example, a trained self-supervised model
+may provide good representations to be used in a downstream
+task, but the outputs themselves may not be directly interpreted
+or practically useful (in and of themselves).
+Skantze [14] introduced an incremental and general SSL
+task suitable for modeling turn-taking, where a system is trained
+to predict probabilities associated with future VA, for each
+speaker, over a dialog. The idea is that if a model can successfully predict the future VA of a dialog, that information can be
+used to control the turn-taking actions of a conversational system. In addition to the training objective, they introduced two
+zero-shot tasks (i.e., ways of utilizing the low model utility outputs), in order to infer turn-taking events directly. In their work
+they showed that this general task of modeling future VA was
+successful in producing turn-taking models which could distinguish between SHIFT and HOLD, along with more complex
+tasks described below. Others reproduced these finding while
+improving performance by using more advanced input features
+and model architectures [15, 16] as well as its generalization
+across languages [17].
+In this paper, we extend prior work, highlight a theoretical
+weakness of their design, and propose an alternative. We show
+empirically that our design improves performance on two new
+zero-shot tasks, while having equal or greater performance on
+existing tasks. We provide publicly available code1 which standardizes the evaluation “zero-shot” metrics, events (moments of
+interest), and model output layers, in order to make these tasks
+more accessible to the research community at large.
